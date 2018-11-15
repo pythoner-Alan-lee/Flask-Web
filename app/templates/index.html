@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Flasky{% endblock %}
+{% block page_content %}
+<!--	<div class="page-header">
+		<h1>Hello,{% if current_user.is_authenticated() %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
+		{% if not known %}
+		<p>Pleased to meet you!</p>
+		{% else %}
+		<p>Happy to see you again!</p>
+		{% endif %}
+	</div>-->
+
+	<div>
+		<h1>Hello,{% if current_user.is_authenticated() %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
+
+		{% if current_user.can(Permission.WRITE_ARTICLES) %}
+		<hr>
+		{{ wtf.quick_form(form) }}
+		{% endif %}
+	</div>
+	<div class="post-tabs">
+    <ul class="nav nav-tabs">
+        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
+        {% if current_user.is_authenticated %}
+        <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">Followers</a></li>
+        {% endif %}
+    </ul>
+    {% include '_posts.html' %}
+	</div>
+<!-- 	<div class="posts">
+	{% for post in posts %}
+	<hr>
+	<li class="post" style="list-style:none;">
+		<div class="profile-thumbnail" style="float:left;">
+			<a href="{{ url_for('.user', username=post.author.username) }}" style="margin:10px;">
+				<img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=50) }}">
+			</a>
+		</div>
+		<div class="post-date" style="float:right;">{{ moment(post.timestamp).fromNow() }}</div>
+ 			<div class="post-author" style="margin:10px;">
+			<a href="{{ url_for('.user', username=post.author.username) }}">
+ 					{{ post.author.username }}
+ 				</a>
+ 			</div>
+		<div class="post-body" style="margin-left: 70px;">                
+			{% if post.body_html %}
+                    {{ post.body_html | safe }}
+                {% else %}
+                    {{ post.body }}
+                {% endif %}
+            </div>
+	</li>
+	{% endfor %}
+</div> -->
+	{% if pagination %}
+	<div class="pagination">
+	    {{ macros.pagination_widget(pagination, '.index') }}
+	</div>
+	{% endif %}
+	{% block scripts %}
+	{{ super() }}
+	{{ pagedown.include_pagedown() }}
+	{% endblock %}	
+{% endblock %}
